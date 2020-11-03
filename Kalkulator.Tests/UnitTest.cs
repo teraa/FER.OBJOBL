@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Kalkulator.Tests
 {
-    public class UnitTest1
+    public class UnitTest
     {
         private ICalculator calculator;
 
