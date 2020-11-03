@@ -46,7 +46,6 @@
     <Compile Include="ICalculator.cs" />
     <Compile Include="Kalkulator.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
