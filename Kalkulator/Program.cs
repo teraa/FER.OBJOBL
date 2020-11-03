@@ -5,7 +5,5 @@ namespace Kalkulator
         static void Main(string[] args)
         {
         }
-
-        public static bool Ok() => false;
     }
 }
