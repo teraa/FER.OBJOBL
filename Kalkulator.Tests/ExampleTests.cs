@@ -1,11 +1,18 @@
 using PrvaDomacaZadaca_Kalkulator;
 using System;
+using System.Globalization;
+using System.Threading;
 using Xunit;
 
 namespace Kalkulator.Tests
 {
     public class ExampleTests
     {
+        static ExampleTests()
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("hr-HR");
+        }
+
         private ICalculator calculator;
 
         /// <summary>
