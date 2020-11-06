@@ -162,7 +162,7 @@ namespace Kalkulator.Tests
             calculator.Press('S');
 
             string displayState = calculator.GetCurrentDisplayState();
-            Assert.Equal(Math.Round(-0.99377163645568116800870483726536, 9).ToString(), displayState);
+            Assert.Equal("-0,993771636", displayState);
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace Kalkulator.Tests
         }
 
         /// <summary>
-        /// Provjera ispisuje li se error u slučaju da je rezultat operacije 
+        /// Provjera ispisuje li se error u slučaju da je rezultat operacije
         /// veći od dopuštenog
         /// </summary>
         [Fact]
