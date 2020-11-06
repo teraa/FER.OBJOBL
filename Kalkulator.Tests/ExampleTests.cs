@@ -8,11 +8,6 @@ namespace Kalkulator.Tests
 {
     public class ExampleTests
     {
-        static ExampleTests()
-        {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("hr-HR");
-        }
-
         private ICalculator calculator;
 
         /// <summary>
@@ -79,7 +74,7 @@ namespace Kalkulator.Tests
             calculator.Press('M');
 
             string displayState = calculator.GetCurrentDisplayState();
-            Assert.Equal(Math.Round(-12345.67891234, 5).ToString(), displayState);
+            Assert.Equal("-12345,67891", displayState);
         }
 
         /// <summary>
@@ -162,7 +157,7 @@ namespace Kalkulator.Tests
             calculator.Press('S');
 
             string displayState = calculator.GetCurrentDisplayState();
-            Assert.Equal(Math.Round(-0.99377163645568116800870483726536, 9).ToString(), displayState);
+            Assert.Equal("-0,993771636", displayState);
         }
 
         /// <summary>
@@ -249,7 +244,7 @@ namespace Kalkulator.Tests
         }
 
         /// <summary>
-        /// Provjera ispisuje li se error u slučaju da je rezultat operacije 
+        /// Provjera ispisuje li se error u slučaju da je rezultat operacije
         /// veći od dopuštenog
         /// </summary>
         [Fact]
