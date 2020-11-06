@@ -8,11 +8,6 @@ namespace Kalkulator.Tests
 {
     public class ExampleTests
     {
-        static ExampleTests()
-        {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("hr-HR");
-        }
-
         private ICalculator calculator;
 
         /// <summary>
@@ -79,7 +74,7 @@ namespace Kalkulator.Tests
             calculator.Press('M');
 
             string displayState = calculator.GetCurrentDisplayState();
-            Assert.Equal(Math.Round(-12345.67891234, 5).ToString(), displayState);
+            Assert.Equal("-12345,67891", displayState);
         }
 
         /// <summary>
