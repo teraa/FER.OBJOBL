@@ -244,7 +244,10 @@ namespace PrvaDomacaZadaca_Kalkulator
                     case '*': ProcessBinaryOperator(Operator.Multiply); break;
                     case '/': ProcessBinaryOperator(Operator.Divide); break;
 
-                    case '=': ExecuteOperation(); break;
+                    case '=':
+                        ExecuteOperation();
+                        _lastInput = InputType.Equals;
+                        break;
 
                     case 'M': _display.Perform(x => -x); break;
                     case 'S': _display.Perform(Math.Sin); break;
@@ -266,8 +269,6 @@ namespace PrvaDomacaZadaca_Kalkulator
             if (_lastInput != InputType.Equals)
                 _lastOperand = _display.Value;
 
-            _lastInput = InputType.Equals;
-
             switch (_lastOperator)
             {
                 case Operator.None: _result = _lastOperand; break;
@@ -283,9 +284,8 @@ namespace PrvaDomacaZadaca_Kalkulator
 
         private void ProcessBinaryOperator(Operator op)
         {
-            _lastOperand = _display.Value;
-
-            if (_lastInput != InputType.Operator) // Ignore repeating of operators, only perform last
+            // Ignore repeating of operators, only perform last
+            if (_lastInput != InputType.Equals && _lastInput != InputType.Operator)
                 ExecuteOperation();
 
             _lastOperator = op;
