@@ -34,6 +34,7 @@ namespace PrvaDomacaZadaca_Kalkulator
     [DebuggerDisplay("{State}")]
     internal class Display
     {
+        private const string ErrorState = "-E-";
         private const int MaxDigits = 10;
         private static readonly CultureInfo Culture = new CultureInfo("hr-HR");
 
@@ -52,11 +53,19 @@ namespace PrvaDomacaZadaca_Kalkulator
             }
         }
 
-        public bool IsZero
+        public bool IsZeroState
         {
             get
             {
                 return _characters.Count == 1 && _characters[0] == '0';
+            }
+        }
+
+        public bool IsErrorState
+        {
+            get
+            {
+                return State == ErrorState;
             }
         }
 
@@ -107,7 +116,7 @@ namespace PrvaDomacaZadaca_Kalkulator
             if (!char.IsDigit(c))
                 throw new ArgumentException("Argument is not a digit", "c");
 
-            if (IsZero)
+            if (IsZeroState)
             {
                 Set(c);
             }
@@ -129,19 +138,14 @@ namespace PrvaDomacaZadaca_Kalkulator
             if (!double.IsInfinity(value) && TryRestrict(ref value))
             {
                 Value = value;
-            }
             else
-            {
-                State = "-E-";
-            }
+                State = ErrorState;
         }
 
         private bool TryRestrict(ref double value)
         {
             if (value == 0)
-            {
                 return true;
-            }
 
             double absv = Math.Abs(value);
             int digits = absv <= 1
@@ -149,9 +153,7 @@ namespace PrvaDomacaZadaca_Kalkulator
                 : (int)Math.Floor(Math.Log10(absv)) + 1;
 
             if (digits > MaxDigits)
-            {
                 return false;
-            }
 
             value = Math.Round(value, MaxDigits - digits);
             return true;
@@ -170,10 +172,10 @@ namespace PrvaDomacaZadaca_Kalkulator
         public Kalkulator()
         {
             _display = new Display();
-            Reset();
+            Initialize();
         }
 
-        private void Reset()
+        private void Initialize()
         {
             _result = 0;
             _savedValue = 0;
@@ -263,7 +265,7 @@ namespace PrvaDomacaZadaca_Kalkulator
 
         private void ProcessBinaryOperator(Operator op)
         {
-            if (_lastInput != InputType.Operator)
+            if (_lastInput != InputType.Operator) // Ignore repeating of operators, only perform last
                 ExecuteOperation();
 
             _lastOperator = op;
