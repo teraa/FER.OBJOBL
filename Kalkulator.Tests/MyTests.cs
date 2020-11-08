@@ -189,6 +189,17 @@ namespace Kalkulator.Tests
         }
 
         [Fact]
+        public void RepeatEqualsThenOperator_DoNothing()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('5', "5");
+            c.PressCheck('+', "5");
+            c.PressCheck('=', "10");
+            c.PressCheck('=', "15");
+            c.PressCheck('/', "15");
+        }
+
+        [Fact]
         public void Doc_OrderOfOperations()
         {
             var c = Factory.CreateCalculator();
