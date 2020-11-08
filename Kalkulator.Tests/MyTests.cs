@@ -341,13 +341,7 @@ namespace Kalkulator.Tests
         public void SmallNumber_NoExponentialFormat()
         {
             var c = Factory.CreateCalculator();
-            c.Press('9');
-            c.Press('8');
-            c.Press('7');
-            c.Press('6');
-            c.Press('/');
-            c.Press('1');
-            c.Press('0');
+            c.PressMultiple("9876/10");
             c.PressCheck('=', "987,6");
             c.PressCheck('=', "98,76");
             c.PressCheck('=', "9,876");
@@ -363,6 +357,15 @@ namespace Kalkulator.Tests
             c.PressCheck('=', "0,000000001");
             c.PressCheck('=', "0");
         }
+
+        [Fact]
+        public void TooBigNumber_Error()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressMultiple("9999999998+1");
+            c.PressCheck('=', "9999999999");
+            c.PressCheck('=', "-E-");
+        }
     }
 
     public static class Extensions
@@ -371,6 +374,12 @@ namespace Kalkulator.Tests
         {
             calculator.Press(c);
             Assert.Equal(expected, calculator.GetCurrentDisplayState());
+        }
+
+        public static void PressMultiple(this ICalculator calculator, string keys)
+        {
+            foreach (var c in keys)
+                calculator.Press(c);
         }
     }
 }
