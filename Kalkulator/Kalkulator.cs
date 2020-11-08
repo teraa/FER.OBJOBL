@@ -134,9 +134,16 @@ namespace PrvaDomacaZadaca_Kalkulator
 
         public void Perform(Func<double, double> func)
         {
-            double value = func(Value);
-            if (!double.IsInfinity(value) && TryRestrict(ref value))
-            {
+            double value;
+            if (!TryGetValue(out value))
+                return;
+
+            value = func(value);
+
+            if (value == 0)
+                value = 0; // make sure it's positive zero
+
+            if (!double.IsInfinity(value) && !double.IsNaN(value) && TryRestrict(ref value))
                 Value = value;
             else
                 State = ErrorState;
@@ -222,15 +229,8 @@ namespace PrvaDomacaZadaca_Kalkulator
                     case '*': ProcessBinaryOperator(Operator.Multiply); break;
                     case '/': ProcessBinaryOperator(Operator.Divide); break;
 
-                    // Change sign
-                    case 'M':
-                        //if (_lastInput == InputType.Number)
-                        if (!_display.IsZero)
-                        {
-                            _display.Perform(x => -x);
-                        }
-                        break;
 
+                    case 'M': _display.Perform(x => -x); break;
                     case 'S': _display.Perform(Math.Sin); break;
                     case 'K': _display.Perform(Math.Cos); break;
                     case 'T': _display.Perform(Math.Tan); break;
