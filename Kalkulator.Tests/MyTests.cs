@@ -1,17 +1,10 @@
 using PrvaDomacaZadaca_Kalkulator;
-using System.Globalization;
-using System.Threading;
 using Xunit;
 
 namespace Kalkulator.Tests
 {
     public class MyTests
     {
-        static MyTests()
-        {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("hr-HR");
-        }
-
         [Fact]
         public void ZeroOnZero_NoChange()
         {
@@ -128,9 +121,9 @@ namespace Kalkulator.Tests
             c.PressCheck(',', "3,");
             c.PressCheck('+', "3");
             c.PressCheck(',', "0,");
-            c.PressCheck('+', "0");
+            c.PressCheck('+', "3");
             c.PressCheck(',', "0,");
-            c.PressCheck('+', "0");
+            c.PressCheck('+', "3");
         }
 
         [Fact]
@@ -171,6 +164,166 @@ namespace Kalkulator.Tests
             c.PressCheck('3', "-16,83");
             c.PressCheck('1', "-16,831");
             c.PressCheck('=', "-42765,669");
+        }
+
+        [Fact]
+        public void RepeatEquals_LastOperation()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('1', "1");
+            c.PressCheck('0', "10");
+            c.PressCheck('-', "10");
+            c.PressCheck('1', "1");
+            c.PressCheck('=', "9");
+            c.PressCheck('=', "8");
+            c.PressCheck('=', "7");
+            c.PressCheck('=', "6");
+            c.PressCheck('=', "5");
+            c.PressCheck('=', "4");
+            c.PressCheck('=', "3");
+            c.PressCheck('=', "2");
+            c.PressCheck('=', "1");
+            c.PressCheck('=', "0");
+            c.PressCheck('=', "-1");
+            c.PressCheck('=', "-2");
+        }
+
+        [Fact]
+        public void Doc_OrderOfOperations()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('2', "2");
+            c.PressCheck('+', "2");
+            c.PressCheck('3', "3");
+            c.PressCheck('-', "5");
+            c.PressCheck('2', "2");
+            c.PressCheck('Q', "4");
+            c.PressCheck('*', "1");
+            c.PressCheck('2', "2");
+            c.PressCheck('=', "2");
+        }
+
+        [Fact]
+        public void InverseOfZero_Error()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('I', "-E-");
+        }
+
+        [Fact]
+        public void RepeatEqualsAfterError_Error()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('5', "5");
+            c.PressCheck('/', "5");
+            c.PressCheck(',', "0,");
+            c.PressCheck('=', "-E-");
+            c.PressCheck('=', "-E-");
+            c.PressCheck('=', "-E-");
+        }
+
+        [Fact]
+        public void SecondOperatorDecimalPoint_NoError()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('7', "7");
+            c.PressCheck('+', "7");
+            c.PressCheck(',', "0,");
+            c.PressCheck('=', "7");
+        }
+
+        [Fact]
+        public void RoundNoOp()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('2', "2");
+            c.PressCheck(',', "2,");
+            c.PressCheck('0', "2,0");
+            c.PressCheck('=', "2");
+            c.PressCheck('=', "2");
+        }
+
+        // add tests for each math function
+        // infinity test for math functions
+
+        // +/- nakon "0," na irl calc mjenja predznak -0 0 -1 0
+        // a dok je samo "0" ne mjenja
+
+        [Fact]
+        public void RestoreNumber_AllowAppending()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('8', "8");
+            c.PressCheck('1', "81");
+            c.PressCheck('3', "813");
+            c.PressCheck('P', "813");
+            c.PressCheck('C', "0");
+            c.PressCheck('1', "1");
+            c.PressCheck('+', "1");
+            c.PressCheck('5', "5");
+            c.PressCheck('G', "813");
+            c.PressCheck(',', "813,");
+            c.PressCheck('6', "813,6");
+        }
+
+        [Fact]
+        public void SquareRootOfNegative_Error()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('4', "4");
+            c.PressCheck('M', "-4");
+            c.PressCheck('R', "-E-");
+            c.PressCheck('=', "-E-");
+            c.PressCheck('=', "-E-");
+        }
+
+        [Fact]
+        public void Reset_ClearsSaved()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('7', "7");
+            c.PressCheck('2', "72");
+            c.PressCheck('P', "72");
+            c.PressCheck('O', "0");
+            c.PressCheck('G', "0");
+        }
+
+        [Fact]
+        public void Clear_DoesNotClearSaved()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('7', "7");
+            c.PressCheck('2', "72");
+            c.PressCheck('P', "72");
+            c.PressCheck('C', "0");
+            c.PressCheck('G', "72");
+        }
+
+        [Fact]
+        public void Error_IgnoreInput()
+        {
+            var c = Factory.CreateCalculator();
+            c.PressCheck('5', "5");
+            c.PressCheck('P', "5");
+            c.PressCheck('/', "5");
+            c.PressCheck('0', "0");
+            c.PressCheck('=', "-E-");
+            c.PressCheck('+', "-E-");
+            c.PressCheck('=', "-E-");
+            c.PressCheck('-', "-E-");
+            c.PressCheck('*', "-E-");
+            c.PressCheck('/', "-E-");
+            c.PressCheck('M', "-E-");
+            c.PressCheck('S', "-E-");
+            c.PressCheck('K', "-E-");
+            c.PressCheck('T', "-E-");
+            c.PressCheck('Q', "-E-");
+            c.PressCheck('R', "-E-");
+            c.PressCheck('I', "-E-");
+            c.PressCheck('G', "-E-");
+            c.PressCheck('P', "-E-");
+            c.PressCheck('C', "-E-");
+            c.PressCheck('O', "0");
         }
     }
 
