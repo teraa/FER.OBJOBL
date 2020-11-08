@@ -69,9 +69,9 @@ namespace PrvaDomacaZadaca_Kalkulator
             }
             set
             {
-                string chars = value.ToString(NumberFormat, Culture).TrimEnd('0');
-                if ((value % 1) == 0)
-                    chars = chars.TrimEnd(',');
+                string chars = value.ToString(NumberFormat, Culture)
+                    .TrimEnd('0')
+                    .TrimEnd(',');
 
                 _characters.Clear();
                 _characters.AddRange(chars);
@@ -263,6 +263,7 @@ namespace PrvaDomacaZadaca_Kalkulator
                 }
             }
         }
+
         private void ExecuteOperation()
         {
             if (_lastInputType != InputType.Equals)
