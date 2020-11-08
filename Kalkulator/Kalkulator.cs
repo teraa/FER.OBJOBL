@@ -100,6 +100,21 @@ namespace PrvaDomacaZadaca_Kalkulator
             return double.TryParse(new string(_characters.ToArray()), NumberStyles.Float, Culture, out result);
         }
 
+        public bool TrySetValue(ref double value)
+        {
+            if (value == 0)
+                value = 0; // make sure it's positive zero
+
+            if (!double.IsInfinity(value) && !double.IsNaN(value) && TryRestrict(ref value))
+            {
+                Value = value;
+                return true;
+            }
+
+            State = ErrorState;
+            return false;
+        }
+
         public void Clear()
         {
             _characters.Clear();
@@ -140,13 +155,7 @@ namespace PrvaDomacaZadaca_Kalkulator
 
             value = func(value);
 
-            if (value == 0)
-                value = 0; // make sure it's positive zero
-
-            if (!double.IsInfinity(value) && !double.IsNaN(value) && TryRestrict(ref value))
-                Value = value;
-            else
-                State = ErrorState;
+            TrySetValue(ref value);
         }
 
         private bool TryRestrict(ref double value)
@@ -257,19 +266,19 @@ namespace PrvaDomacaZadaca_Kalkulator
             if (_lastInput != InputType.Equals)
                 _lastOperand = _display.Value;
 
+            _lastInput = InputType.Equals;
+
             switch (_lastOperator)
             {
-                case Operator.None: _display.Perform(x => _lastOperand); break;
-                case Operator.Plus: _display.Perform(x => _result + _lastOperand); break;
-                case Operator.Minus: _display.Perform(x => _result - _lastOperand); break;
-                case Operator.Multiply: _display.Perform(x => _result * _lastOperand); break;
-                case Operator.Divide: _display.Perform(x => _result / _lastOperand); break;
+                case Operator.None: _result = _lastOperand; break;
+                case Operator.Plus: _result += _lastOperand; break;
+                case Operator.Minus: _result -= _lastOperand; break;
+                case Operator.Multiply: _result *= _lastOperand; break;
+                case Operator.Divide: _result /= _lastOperand; break;
             }
 
-            if (!_display.TryGetValue(out _result))
+            if (!_display.TrySetValue(ref _result))
                 _result = 0;
-
-            _lastInput = InputType.Equals;
         }
 
         private void ProcessBinaryOperator(Operator op)
