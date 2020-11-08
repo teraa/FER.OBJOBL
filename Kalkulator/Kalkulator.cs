@@ -10,7 +10,6 @@ namespace PrvaDomacaZadaca_Kalkulator
     {
         public static ICalculator CreateCalculator()
         {
-            // vratiti kalkulator
             return new Kalkulator();
         }
     }
@@ -28,7 +27,8 @@ namespace PrvaDomacaZadaca_Kalkulator
     {
         None,
         Number,
-        Operator
+        Operator,
+        Equals
     }
 
     [DebuggerDisplay("{State}")]
@@ -173,6 +173,7 @@ namespace PrvaDomacaZadaca_Kalkulator
         private readonly Display _display;
         private double _result;
         private double _savedValue;
+        private double _lastOperand;
         private Operator _lastOperator;
         private InputType _lastInput;
 
@@ -186,6 +187,7 @@ namespace PrvaDomacaZadaca_Kalkulator
         {
             _result = 0;
             _savedValue = 0;
+            _lastOperand = 0;
             _lastOperator = Operator.None;
             _lastInput = InputType.None;
             _display.Clear();
@@ -252,21 +254,28 @@ namespace PrvaDomacaZadaca_Kalkulator
         }
         private void ExecuteOperation()
         {
+            if (_lastInput != InputType.Equals)
+                _lastOperand = _display.Value;
+
             switch (_lastOperator)
             {
-                case Operator.None: _display.Perform(x => x); break;
-                case Operator.Plus: _display.Perform(x => _result + x); break;
-                case Operator.Minus: _display.Perform(x => _result - x); break;
-                case Operator.Multiply: _display.Perform(x => _result * x); break;
-                case Operator.Divide: _display.Perform(x => _result / x); break;
+                case Operator.None: _display.Perform(x => _lastOperand); break;
+                case Operator.Plus: _display.Perform(x => _result + _lastOperand); break;
+                case Operator.Minus: _display.Perform(x => _result - _lastOperand); break;
+                case Operator.Multiply: _display.Perform(x => _result * _lastOperand); break;
+                case Operator.Divide: _display.Perform(x => _result / _lastOperand); break;
             }
 
             if (!_display.TryGetValue(out _result))
                 _result = 0;
+
+            _lastInput = InputType.Equals;
         }
 
         private void ProcessBinaryOperator(Operator op)
         {
+            _lastOperand = _display.Value;
+
             if (_lastInput != InputType.Operator) // Ignore repeating of operators, only perform last
                 ExecuteOperation();
 
