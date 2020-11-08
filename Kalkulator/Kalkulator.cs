@@ -217,7 +217,6 @@ namespace PrvaDomacaZadaca_Kalkulator
                         }
                         else
                         {
-                            _result = 0;
                             _display.Clear();
                             _display.Append(c);
                         }
