@@ -36,6 +36,7 @@ namespace PrvaDomacaZadaca_Kalkulator
     {
         private const string ErrorState = "-E-";
         private const int MaxDigits = 10;
+        private static readonly string NumberFormat = "F" + (MaxDigits - 1);
         private static readonly CultureInfo Culture = new CultureInfo("hr-HR");
 
         private readonly List<char> _characters;
@@ -77,8 +78,12 @@ namespace PrvaDomacaZadaca_Kalkulator
             }
             set
             {
+                string chars = value.ToString(NumberFormat, Culture).TrimEnd('0');
+                if ((value % 1) == 0)
+                    chars = chars.TrimEnd(',');
+
                 _characters.Clear();
-                _characters.AddRange(value.ToString(Culture));
+                _characters.AddRange(chars);
             }
         }
 
