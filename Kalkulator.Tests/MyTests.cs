@@ -336,6 +336,33 @@ namespace Kalkulator.Tests
             c.PressCheck('C', "-E-");
             c.PressCheck('O', "0");
         }
+
+        [Fact]
+        public void SmallNumber_NoExponentialFormat()
+        {
+            var c = Factory.CreateCalculator();
+            c.Press('9');
+            c.Press('8');
+            c.Press('7');
+            c.Press('6');
+            c.Press('/');
+            c.Press('1');
+            c.Press('0');
+            c.PressCheck('=', "987,6");
+            c.PressCheck('=', "98,76");
+            c.PressCheck('=', "9,876");
+            c.PressCheck('=', "0,9876");
+            c.PressCheck('=', "0,09876");
+            c.PressCheck('=', "0,009876");
+            c.PressCheck('=', "0,0009876");
+            c.PressCheck('=', "0,00009876");
+            c.PressCheck('=', "0,000009876");
+            c.PressCheck('=', "0,000000988");
+            c.PressCheck('=', "0,000000099");
+            c.PressCheck('=', "0,00000001");
+            c.PressCheck('=', "0,000000001");
+            c.PressCheck('=', "0");
+        }
     }
 
     public static class Extensions
