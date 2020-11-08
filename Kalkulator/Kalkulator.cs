@@ -45,14 +45,6 @@ namespace PrvaDomacaZadaca_Kalkulator
             _characters = new List<char> { '0' };
         }
 
-        public IEnumerable<char> Characters
-        {
-            get
-            {
-                return _characters;
-            }
-        }
-
         public bool IsZeroState
         {
             get
@@ -125,11 +117,6 @@ namespace PrvaDomacaZadaca_Kalkulator
             _characters.Add('0');
         }
 
-        public void Append(char c)
-        {
-            _characters.Add(c);
-        }
-
         public void AppendDigit(char c)
         {
             if (!char.IsDigit(c))
@@ -143,6 +130,12 @@ namespace PrvaDomacaZadaca_Kalkulator
             {
                 _characters.Add(c);
             }
+        }
+
+        public void AppendDecimal()
+        {
+            if (!_characters.Contains(','))
+                _characters.Add(',');
         }
 
         public void Set(char c)
@@ -235,13 +228,12 @@ namespace PrvaDomacaZadaca_Kalkulator
                     case ',':
                         if (_lastInputType == InputType.Number)
                         {
-                            if (!_display.Characters.Contains(c))
-                                _display.Append(c);
+                            _display.AppendDecimal();
                         }
                         else
                         {
                             _display.Clear();
-                            _display.Append(c);
+                            _display.AppendDecimal();
                         }
                         _lastInputType = InputType.Number;
                         break;
