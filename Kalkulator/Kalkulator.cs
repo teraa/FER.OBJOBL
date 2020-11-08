@@ -193,6 +193,11 @@ namespace PrvaDomacaZadaca_Kalkulator
 
         public void Press(char c)
         {
+            if (c == 'O')
+                Initialize();
+            else if (_display.IsErrorState)
+                return;
+
             if (char.IsDigit(c))
             {
                 if (_lastInput == InputType.Number)
@@ -228,6 +233,7 @@ namespace PrvaDomacaZadaca_Kalkulator
                     case '*': ProcessBinaryOperator(Operator.Multiply); break;
                     case '/': ProcessBinaryOperator(Operator.Divide); break;
 
+                    case '=': ExecuteOperation(); break;
 
                     case 'M': _display.Perform(x => -x); break;
                     case 'S': _display.Perform(Math.Sin); break;
@@ -237,13 +243,10 @@ namespace PrvaDomacaZadaca_Kalkulator
                     case 'R': _display.Perform(Math.Sqrt); break;
                     case 'I': _display.Perform(x => 1 / x); break;
 
-                    case '=': ExecuteOperation(); break;
-
-                    case 'O': Reset(); break;
-                    case 'C': _display.Clear(); break;
-
                     case 'P': _savedValue = _display.Value; break;
                     case 'G': _display.Value = _savedValue; break;
+
+                    case 'C': _display.Clear(); break;
                 }
             }
         }
