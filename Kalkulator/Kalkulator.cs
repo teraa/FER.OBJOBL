@@ -25,7 +25,6 @@ namespace PrvaDomacaZadaca_Kalkulator
 
     internal enum InputType
     {
-        None,
         Number,
         Operator,
         Equals
@@ -110,7 +109,7 @@ namespace PrvaDomacaZadaca_Kalkulator
             if (value == 0)
                 value = 0; // make sure it's positive zero
 
-            if (!double.IsInfinity(value) && !double.IsNaN(value) && TryRestrict(ref value))
+            if (TryRestrict(ref value))
             {
                 Value = value;
                 return true;
@@ -165,6 +164,9 @@ namespace PrvaDomacaZadaca_Kalkulator
 
         private bool TryRestrict(ref double value)
         {
+            if (double.IsInfinity(value) || double.IsNaN(value))
+                return false;
+
             if (value == 0)
                 return true;
 
@@ -189,7 +191,7 @@ namespace PrvaDomacaZadaca_Kalkulator
         private double _savedValue;
         private double _lastOperand;
         private Operator _lastOperator;
-        private InputType _lastInput;
+        private InputType _lastInputType;
 
         public Kalkulator()
         {
@@ -203,7 +205,7 @@ namespace PrvaDomacaZadaca_Kalkulator
             _savedValue = 0;
             _lastOperand = 0;
             _lastOperator = Operator.None;
-            _lastInput = InputType.None;
+            _lastInputType = InputType.Number;
             _display.Clear();
         }
 
@@ -216,14 +218,14 @@ namespace PrvaDomacaZadaca_Kalkulator
 
             if (char.IsDigit(c))
             {
-                if (_lastInput == InputType.Number)
+                if (_lastInputType == InputType.Number)
                 {
                     _display.AppendDigit(c);
                 }
                 else
                 {
                     _display.Set(c);
-                    _lastInput = InputType.Number;
+                    _lastInputType = InputType.Number;
                 }
             }
             else
@@ -231,7 +233,7 @@ namespace PrvaDomacaZadaca_Kalkulator
                 switch (c)
                 {
                     case ',':
-                        if (_lastInput == InputType.Number)
+                        if (_lastInputType == InputType.Number)
                         {
                             if (!_display.Characters.Contains(c))
                                 _display.Append(c);
@@ -241,7 +243,7 @@ namespace PrvaDomacaZadaca_Kalkulator
                             _display.Clear();
                             _display.Append(c);
                         }
-                        _lastInput = InputType.Number;
+                        _lastInputType = InputType.Number;
                         break;
 
                     case '+': ProcessBinaryOperator(Operator.Plus); break;
@@ -251,7 +253,7 @@ namespace PrvaDomacaZadaca_Kalkulator
 
                     case '=':
                         ExecuteOperation();
-                        _lastInput = InputType.Equals;
+                        _lastInputType = InputType.Equals;
                         break;
 
                     case 'M': _display.Perform(x => -x); break;
@@ -271,7 +273,7 @@ namespace PrvaDomacaZadaca_Kalkulator
         }
         private void ExecuteOperation()
         {
-            if (_lastInput != InputType.Equals)
+            if (_lastInputType != InputType.Equals)
                 _lastOperand = _display.Value;
 
             switch (_lastOperator)
@@ -283,18 +285,17 @@ namespace PrvaDomacaZadaca_Kalkulator
                 case Operator.Divide: _result /= _lastOperand; break;
             }
 
-            if (!_display.TrySetValue(ref _result))
-                _result = 0;
+            _display.TrySetValue(ref _result);
         }
 
         private void ProcessBinaryOperator(Operator op)
         {
             // Ignore repeating of operators, only perform last
-            if (_lastInput != InputType.Equals && _lastInput != InputType.Operator)
+            if (_lastInputType != InputType.Equals && _lastInputType != InputType.Operator)
                 ExecuteOperation();
 
             _lastOperator = op;
-            _lastInput = InputType.Operator;
+            _lastInputType = InputType.Operator;
         }
 
         public string GetCurrentDisplayState()
