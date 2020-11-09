@@ -196,50 +196,32 @@ namespace PrvaDomacaZadaca_Kalkulator
         public void Press(char c)
         {
             if (c == 'O')
-                Initialize();
-            else if (_display.IsErrorState)
-                return;
-
-            if (char.IsDigit(c))
             {
-                if (_lastInputType == InputType.Number)
-                {
-                    _display.AppendDigit(c);
-                }
-                else
-                {
-                    _display.Set(c);
-                    _lastInputType = InputType.Number;
-                }
+                Initialize();
+            }
+            else if (_display.IsErrorState)
+            {
+                return;
+            }
+            else if (char.IsDigit(c))
+            {
+                ProcessDigit(c);
             }
             else
             {
                 switch (c)
                 {
-                    case ',':
-                        if (_lastInputType == InputType.Number)
-                        {
-                            _display.AppendDecimal();
-                        }
-                        else
-                        {
-                            _display.Clear();
-                            _display.AppendDecimal();
-                        }
-                        _lastInputType = InputType.Number;
-                        break;
+                    case ',': ProcessDecimal(); break;
+
+                    case '=': ProcessEquals(); break;
 
                     case '+': ProcessBinaryOperator((x, y) => x + y); break;
                     case '-': ProcessBinaryOperator((x, y) => x - y); break;
                     case '*': ProcessBinaryOperator((x, y) => x * y); break;
                     case '/': ProcessBinaryOperator((x, y) => x / y); break;
 
-                    case '=':
-                        ExecuteOperation();
-                        _lastInputType = InputType.Equals;
-                        break;
-
                     case 'M': _display.Perform(x => -x); break;
+
                     case 'S': ProcessUnaryOperator(Math.Sin); break;
                     case 'K': ProcessUnaryOperator(Math.Cos); break;
                     case 'T': ProcessUnaryOperator(Math.Tan); break;
@@ -255,13 +237,40 @@ namespace PrvaDomacaZadaca_Kalkulator
             }
         }
 
+        private void ProcessDigit(char digit)
+        {
+            if (_lastInputType == InputType.Number)
+            {
+                _display.AppendDigit(digit);
+            }
+            else
+            {
+                _display.Set(digit);
+                _lastInputType = InputType.Number;
+            }
+        }
+
+        private void ProcessDecimal()
+        {
+            if (_lastInputType != InputType.Number)
+                _display.Clear();
+
+            _display.AppendDecimal();
+            _lastInputType = InputType.Number;
+        }
+
+        private void ProcessEquals()
+        {
+            ExecuteOperation();
+            _lastInputType = InputType.Equals;
+        }
+
         private void ExecuteOperation()
         {
             if (_lastInputType != InputType.Equals)
                 _lastOperand = _display.Value;
 
             _result = _lastOperation(_result, _lastOperand);
-
             _display.TrySetValue(ref _result);
         }
 
