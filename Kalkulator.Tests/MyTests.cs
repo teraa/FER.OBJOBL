@@ -355,6 +355,18 @@ namespace Kalkulator.Tests
         {
             c.PressMultipleCheck(input, expected);
         }
+
+        [Theory]
+        [InlineData("3S", "0,141120008")]
+        [InlineData("3K", "-0,989992497")]
+        [InlineData("3T", "-0,142546543")]
+        [InlineData("3Q", "9")]
+        [InlineData("3R", "1,732050808")]
+        [InlineData("3I", "0,333333333")]
+        public void UnaryOperator_CorrectResult(string input, string expected)
+        {
+            c.PressMultipleCheck(input, expected);
+        }
     }
 
     public static class Extensions
