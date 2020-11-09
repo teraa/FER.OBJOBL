@@ -14,15 +14,6 @@ namespace PrvaDomacaZadaca_Kalkulator
         }
     }
 
-    internal enum Operator
-    {
-        None,
-        Plus,
-        Minus,
-        Multiply,
-        Divide,
-    }
-
     internal enum InputType
     {
         Number,
@@ -183,8 +174,8 @@ namespace PrvaDomacaZadaca_Kalkulator
         private double _result;
         private double _savedValue;
         private double _lastOperand;
-        private Operator _lastOperator;
         private InputType _lastInputType;
+        private Func<double, double, double> _lastOperation;
 
         public Kalkulator()
         {
@@ -197,7 +188,7 @@ namespace PrvaDomacaZadaca_Kalkulator
             _result = 0;
             _savedValue = 0;
             _lastOperand = 0;
-            _lastOperator = Operator.None;
+            _lastOperation = (x, y) => y;
             _lastInputType = InputType.Number;
             _display.Clear();
         }
@@ -238,10 +229,10 @@ namespace PrvaDomacaZadaca_Kalkulator
                         _lastInputType = InputType.Number;
                         break;
 
-                    case '+': ProcessBinaryOperator(Operator.Plus); break;
-                    case '-': ProcessBinaryOperator(Operator.Minus); break;
-                    case '*': ProcessBinaryOperator(Operator.Multiply); break;
-                    case '/': ProcessBinaryOperator(Operator.Divide); break;
+                    case '+': ProcessBinaryOperator((x, y) => x + y); break;
+                    case '-': ProcessBinaryOperator((x, y) => x - y); break;
+                    case '*': ProcessBinaryOperator((x, y) => x * y); break;
+                    case '/': ProcessBinaryOperator((x, y) => x / y); break;
 
                     case '=':
                         ExecuteOperation();
@@ -269,25 +260,18 @@ namespace PrvaDomacaZadaca_Kalkulator
             if (_lastInputType != InputType.Equals)
                 _lastOperand = _display.Value;
 
-            switch (_lastOperator)
-            {
-                case Operator.None: _result = _lastOperand; break;
-                case Operator.Plus: _result += _lastOperand; break;
-                case Operator.Minus: _result -= _lastOperand; break;
-                case Operator.Multiply: _result *= _lastOperand; break;
-                case Operator.Divide: _result /= _lastOperand; break;
-            }
+            _result = _lastOperation(_result, _lastOperand);
 
             _display.TrySetValue(ref _result);
         }
 
-        private void ProcessBinaryOperator(Operator op)
+        private void ProcessBinaryOperator(Func<double, double, double> func)
         {
             // Ignore repeating of operators, only perform last
             if (_lastInputType != InputType.Equals && _lastInputType != InputType.BinaryOperator)
                 ExecuteOperation();
 
-            _lastOperator = op;
+            _lastOperation = func;
             _lastInputType = InputType.BinaryOperator;
         }
 
