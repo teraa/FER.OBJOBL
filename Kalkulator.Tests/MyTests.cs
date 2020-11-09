@@ -366,6 +366,19 @@ namespace Kalkulator.Tests
             c.PressCheck('=', "9999999999");
             c.PressCheck('=', "-E-");
         }
+
+        [Theory]
+        [InlineData("10S20", "20")]
+        [InlineData("10K20", "20")]
+        [InlineData("10T20", "20")]
+        [InlineData("10Q20", "20")]
+        [InlineData("10R20", "20")]
+        [InlineData("10I20", "20")]
+        public void UnaryThenNumber_OverwriteDisplay(string input, string expected)
+        {
+            var c = Factory.CreateCalculator();
+            c.PressMultipleCheck(input, expected);
+        }
     }
 
     public static class Extensions
@@ -380,6 +393,12 @@ namespace Kalkulator.Tests
         {
             foreach (var c in keys)
                 calculator.Press(c);
+        }
+
+        public static void PressMultipleCheck(this ICalculator calculator, string keys, string expected)
+        {
+            PressMultiple(calculator, keys);
+            Assert.Equal(expected, calculator.GetCurrentDisplayState());
         }
     }
 }
