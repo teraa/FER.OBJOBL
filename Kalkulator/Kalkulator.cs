@@ -27,6 +27,7 @@ namespace PrvaDomacaZadaca_Kalkulator
     {
         Number,
         BinaryOperator,
+        UnaryOperator,
         Equals
     }
 
@@ -248,12 +249,12 @@ namespace PrvaDomacaZadaca_Kalkulator
                         break;
 
                     case 'M': _display.Perform(x => -x); break;
-                    case 'S': _display.Perform(Math.Sin); break;
-                    case 'K': _display.Perform(Math.Cos); break;
-                    case 'T': _display.Perform(Math.Tan); break;
-                    case 'Q': _display.Perform(x => x * x); break;
-                    case 'R': _display.Perform(Math.Sqrt); break;
-                    case 'I': _display.Perform(x => 1 / x); break;
+                    case 'S': ProcessUnaryOperator(Math.Sin); break;
+                    case 'K': ProcessUnaryOperator(Math.Cos); break;
+                    case 'T': ProcessUnaryOperator(Math.Tan); break;
+                    case 'Q': ProcessUnaryOperator(x => x * x); break;
+                    case 'R': ProcessUnaryOperator(Math.Sqrt); break;
+                    case 'I': ProcessUnaryOperator(x => 1 / x); break;
 
                     case 'P': _savedValue = _display.Value; break;
                     case 'G': _display.Value = _savedValue; break;
@@ -288,6 +289,12 @@ namespace PrvaDomacaZadaca_Kalkulator
 
             _lastOperator = op;
             _lastInputType = InputType.BinaryOperator;
+        }
+
+        private void ProcessUnaryOperator(Func<double, double> func)
+        {
+            _display.Perform(func);
+            _lastInputType = InputType.UnaryOperator;
         }
 
         public string GetCurrentDisplayState()
