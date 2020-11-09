@@ -367,6 +367,18 @@ namespace Kalkulator.Tests
         {
             c.PressMultipleCheck(input, expected);
         }
+
+        [Theory]
+        [InlineData("10+C", "10")]
+        [InlineData("10-C", "10")]
+        [InlineData("10*C", "10")]
+        [InlineData("10/C", "10")]
+        [InlineData("10+CM", "-10")]
+        [InlineData("10+MC", "-10")]
+        public void BinaryOperatorThenClear_IgnoreClear(string input, string expected)
+        {
+            c.PressMultipleCheck(input, expected);
+        }
     }
 
     public static class Extensions

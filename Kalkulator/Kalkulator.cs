@@ -230,7 +230,10 @@ namespace PrvaDomacaZadaca_Kalkulator
                     case 'P': _savedValue = _display.Value; break;
                     case 'G': _display.TrySetValue(ref _savedValue); break;
 
-                    case 'C': _display.Clear(); break;
+                    case 'C':
+                        if (_lastInputType != InputType.BinaryOperator)
+                            _display.Clear();
+                        break;
                 }
             }
         }
