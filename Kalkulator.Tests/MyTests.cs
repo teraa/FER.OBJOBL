@@ -5,10 +5,11 @@ namespace Kalkulator.Tests
 {
     public class MyTests
     {
+        private readonly ICalculator c = Factory.CreateCalculator();
+
         [Fact]
         public void ZeroOnZero_NoChange()
         {
-            var c = Factory.CreateCalculator();
             Assert.Equal("0", c.GetCurrentDisplayState());
             c.PressCheck('0', "0");
             c.PressCheck('0', "0");
@@ -17,7 +18,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void MaxDigits_IgnoreExtra()
         {
-            var c = Factory.CreateCalculator();
             Assert.Equal("0", c.GetCurrentDisplayState());
             c.PressCheck('1', "1");
             c.PressCheck('2', "12");
@@ -35,14 +35,12 @@ namespace Kalkulator.Tests
         [Fact]
         public void ChangeSignZero_NoChange()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('M', "0");
         }
 
         [Fact]
         public void ChangeSign_Various()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('2', "2");
             c.PressCheck('M', "-2");
             c.PressCheck('3', "-23");
@@ -52,7 +50,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void CheckDisplay_PressSquare_SquareOfANumber()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('1', "1");
             c.PressCheck('2', "12");
             c.PressCheck('3', "123");
@@ -70,7 +67,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void CheckDisplay_PressUnaryOperatorAfterBinaryThenEqual_BinaryOperation()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('2', "2");
             c.PressCheck('+', "2");
             c.PressCheck('I', "0,5");
@@ -81,7 +77,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void SumTwoNumbers()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('2', "2");
             c.PressCheck(',', "2,");
             c.PressCheck('0', "2,0");
@@ -95,7 +90,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void DivideByZero_Error()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('2', "2");
             c.PressCheck('/', "2");
             c.PressCheck('0', "0");
@@ -105,7 +99,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void RepeatBinaryOperator_DoNothing()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('2', "2");
             c.PressCheck(',', "2,");
             c.PressCheck('0', "2,0");
@@ -116,7 +109,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void DecimalPointAfterCalculation_ZeroPoint()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('3', "3");
             c.PressCheck(',', "3,");
             c.PressCheck('+', "3");
@@ -129,7 +121,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void MultipleDecimalPoints_Ignore()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('2', "2");
             c.PressCheck(',', "2,");
             c.PressCheck(',', "2,");
@@ -146,7 +137,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void CheckDisplay_SubtractOfTwoNegaitiveNumbers_Subtract()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('4', "4");
             c.PressCheck('2', "42");
             c.PressCheck('7', "427");
@@ -169,7 +159,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void RepeatEquals_LastOperation()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('1', "1");
             c.PressCheck('0', "10");
             c.PressCheck('-', "10");
@@ -191,7 +180,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void RepeatEqualsThenOperator_DoNothing()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('5', "5");
             c.PressCheck('+', "5");
             c.PressCheck('=', "10");
@@ -202,7 +190,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void Doc_OrderOfOperations()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('2', "2");
             c.PressCheck('+', "2");
             c.PressCheck('3', "3");
@@ -217,14 +204,12 @@ namespace Kalkulator.Tests
         [Fact]
         public void InverseOfZero_Error()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('I', "-E-");
         }
 
         [Fact]
         public void RepeatEqualsAfterError_Error()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('5', "5");
             c.PressCheck('/', "5");
             c.PressCheck(',', "0,");
@@ -236,7 +221,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void SecondOperatorDecimalPoint_NoError()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('7', "7");
             c.PressCheck('+', "7");
             c.PressCheck(',', "0,");
@@ -246,7 +230,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void RoundNoOp()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('2', "2");
             c.PressCheck(',', "2,");
             c.PressCheck('0', "2,0");
@@ -263,7 +246,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void RestoreNumber_AllowAppending()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('8', "8");
             c.PressCheck('1', "81");
             c.PressCheck('3', "813");
@@ -280,7 +262,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void SquareRootOfNegative_Error()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('4', "4");
             c.PressCheck('M', "-4");
             c.PressCheck('R', "-E-");
@@ -291,7 +272,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void Reset_ClearsSaved()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('7', "7");
             c.PressCheck('2', "72");
             c.PressCheck('P', "72");
@@ -302,7 +282,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void Clear_DoesNotClearSaved()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('7', "7");
             c.PressCheck('2', "72");
             c.PressCheck('P', "72");
@@ -313,7 +292,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void Error_IgnoreInput()
         {
-            var c = Factory.CreateCalculator();
             c.PressCheck('5', "5");
             c.PressCheck('P', "5");
             c.PressCheck('/', "5");
@@ -340,7 +318,6 @@ namespace Kalkulator.Tests
         [Fact]
         public void SmallNumber_NoExponentialFormat()
         {
-            var c = Factory.CreateCalculator();
             c.PressMultiple("9876/10");
             c.PressCheck('=', "987,6");
             c.PressCheck('=', "98,76");
@@ -361,8 +338,8 @@ namespace Kalkulator.Tests
         [Fact]
         public void TooBigNumber_Error()
         {
-            var c = Factory.CreateCalculator();
-            c.PressMultiple("9999999998+1");
+            c.PressMultiple("9999999997+1");
+            c.PressCheck('=', "9999999998");
             c.PressCheck('=', "9999999999");
             c.PressCheck('=', "-E-");
         }
@@ -376,7 +353,6 @@ namespace Kalkulator.Tests
         [InlineData("10I20", "20")]
         public void UnaryThenNumber_OverwriteDisplay(string input, string expected)
         {
-            var c = Factory.CreateCalculator();
             c.PressMultipleCheck(input, expected);
         }
     }
