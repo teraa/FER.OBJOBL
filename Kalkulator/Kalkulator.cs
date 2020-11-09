@@ -25,6 +25,7 @@ namespace PrvaDomacaZadaca_Kalkulator
     [DebuggerDisplay("{State}")]
     internal class Display
     {
+        public const char DecimalPoint = ',';
         private const string ErrorState = "-E-";
         private const int MaxDigits = 10;
         private static readonly string NumberFormat = "F" + (MaxDigits - 1);
@@ -59,15 +60,6 @@ namespace PrvaDomacaZadaca_Kalkulator
             {
                 return double.Parse(new string(_characters.ToArray()), Culture);
             }
-            set
-            {
-                string chars = value.ToString(NumberFormat, Culture)
-                    .TrimEnd('0')
-                    .TrimEnd(',');
-
-                _characters.Clear();
-                _characters.AddRange(chars);
-            }
         }
 
         public string State
@@ -95,12 +87,18 @@ namespace PrvaDomacaZadaca_Kalkulator
 
             if (TryRestrict(ref value))
             {
-                Value = value;
+                string chars = value.ToString(NumberFormat, Culture)
+                    .TrimEnd('0')
+                    .TrimEnd(DecimalPoint);
+
+                State = chars;
                 return true;
             }
-
-            State = ErrorState;
-            return false;
+            else
+            {
+                State = ErrorState;
+                return false;
+            }
         }
 
         public void Clear()
@@ -109,25 +107,25 @@ namespace PrvaDomacaZadaca_Kalkulator
             _characters.Add('0');
         }
 
-        public void AppendDigit(char c)
+        public void AppendDigit(char ditit)
         {
-            if (!char.IsDigit(c))
-                throw new ArgumentException("Argument is not a digit", "c");
+            if (!char.IsDigit(ditit))
+                throw new ArgumentException("Character is not a digit", "c");
 
             if (IsZeroState)
             {
-                Set(c);
+                Set(ditit);
             }
             else if (_characters.Count(char.IsDigit) < MaxDigits)
             {
-                _characters.Add(c);
+                _characters.Add(ditit);
             }
         }
 
         public void AppendDecimal()
         {
-            if (!_characters.Contains(','))
-                _characters.Add(',');
+            if (!_characters.Contains(DecimalPoint))
+                _characters.Add(DecimalPoint);
         }
 
         public void Set(char c)
@@ -147,7 +145,7 @@ namespace PrvaDomacaZadaca_Kalkulator
             TrySetValue(ref value);
         }
 
-        private bool TryRestrict(ref double value)
+        private static bool TryRestrict(ref double value)
         {
             if (double.IsInfinity(value) || double.IsNaN(value))
                 return false;
@@ -230,7 +228,7 @@ namespace PrvaDomacaZadaca_Kalkulator
                     case 'I': ProcessUnaryOperator(x => 1 / x); break;
 
                     case 'P': _savedValue = _display.Value; break;
-                    case 'G': _display.Value = _savedValue; break;
+                    case 'G': _display.TrySetValue(ref _savedValue); break;
 
                     case 'C': _display.Clear(); break;
                 }
