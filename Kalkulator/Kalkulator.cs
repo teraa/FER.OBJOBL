@@ -26,7 +26,7 @@ namespace PrvaDomacaZadaca_Kalkulator
     internal enum InputType
     {
         Number,
-        Operator,
+        BinaryOperator,
         Equals
     }
 
@@ -176,7 +176,6 @@ namespace PrvaDomacaZadaca_Kalkulator
         }
     }
 
-
     public class Kalkulator : ICalculator
     {
         private readonly Display _display;
@@ -284,11 +283,11 @@ namespace PrvaDomacaZadaca_Kalkulator
         private void ProcessBinaryOperator(Operator op)
         {
             // Ignore repeating of operators, only perform last
-            if (_lastInputType != InputType.Equals && _lastInputType != InputType.Operator)
+            if (_lastInputType != InputType.Equals && _lastInputType != InputType.BinaryOperator)
                 ExecuteOperation();
 
             _lastOperator = op;
-            _lastInputType = InputType.Operator;
+            _lastInputType = InputType.BinaryOperator;
         }
 
         public string GetCurrentDisplayState()
