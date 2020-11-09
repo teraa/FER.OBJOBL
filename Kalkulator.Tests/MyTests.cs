@@ -240,7 +240,7 @@ namespace Kalkulator.Tests
         // add tests for each math function
         // infinity test for math functions
 
-        // +/- nakon "0," na irl calc mjenja predznak -0 0 -1 0
+        // +/- nakon "0," na irl calc mjenja predznak -0 0 -0 0
         // a dok je samo "0" ne mjenja
 
         [Fact]
