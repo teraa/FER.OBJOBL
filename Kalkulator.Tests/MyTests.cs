@@ -379,6 +379,14 @@ namespace Kalkulator.Tests
         {
             c.PressMultipleCheck(input, expected);
         }
+
+        [Fact]
+        public void GetAfterEqualsThenNumber_AppendToRestored()
+        {
+            c.PressMultiple("10P2+");
+            c.PressCheck('G', "10");
+            c.PressCheck('3', "103");
+        }
     }
 
     public static class Extensions

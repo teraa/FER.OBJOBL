@@ -228,7 +228,10 @@ namespace PrvaDomacaZadaca_Kalkulator
                     case 'I': ProcessUnaryOperator(x => 1 / x); break;
 
                     case 'P': _savedValue = _display.Value; break;
-                    case 'G': _display.TrySetValue(ref _savedValue); break;
+                    case 'G':
+                        _display.TrySetValue(ref _savedValue);
+                        _lastInputType = InputType.Number;
+                        break;
 
                     case 'C':
                         if (_lastInputType != InputType.BinaryOperator)
